@@ -1,0 +1,23 @@
+# Project exclude paths
+/.idea/
+/venv/
+/chromedriver_py-124.0.6367.91/
+/cudnn_windows/
+/data/
+/deer/
+/garb/
+/logs/
+/weights/
+/musk_deer/
+/roe_deer/
+/metrics_test/
+/metrics_train/
+/AccuracyForClass.png
+/PlotsMetrics.png
+/temp/
+/source/
+/ann/
+/js/
+/data_3_class/
+/data_coco_mask/
+/deer_detect/
