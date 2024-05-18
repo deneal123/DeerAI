@@ -118,7 +118,7 @@ def PipeLine(source: str = "./source",
 
 
 if __name__ == "__main__":
-    """args = parser.parse_args()
+    args = parser.parse_args()
     PipeLine(source=args.source,
              models=args.models,
              iou=args.iou,
@@ -137,6 +137,4 @@ if __name__ == "__main__":
              pixel_per_meter=args.pixel_per_meter,
              show_distance=args.show_distance,
              vid_stride=args.vid_stride,
-             device=args.device)"""
-
-    PipeLine()
+             device=args.device)

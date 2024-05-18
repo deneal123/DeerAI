@@ -175,7 +175,8 @@ class ImageObjectDetector:
                 "boxes": boxes.tolist(),
                 "masks": masks,
                 "track_history": None,
-                "distance": None
+                "distance": None,
+                "track_ids": None
             }
 
             """

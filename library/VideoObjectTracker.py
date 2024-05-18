@@ -376,7 +376,8 @@ class VideoObjectTracker:
                     "boxes": boxes.tolist(),
                     "masks": masks,
                     "track_history": frame_track_history,
-                    "distance": frame_distance_history
+                    "distance": frame_distance_history,
+                    "track_ids:": track_ids
                 }
 
                 self.results_dict[index] = sample_dict
