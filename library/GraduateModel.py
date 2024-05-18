@@ -4,6 +4,7 @@ import torchvision
 import torchvision.transforms as transforms
 import torch.nn as nn
 import torch.optim as optim
+import torch.nn.functional as F
 from torch.utils.data import DataLoader
 from torchvision.datasets import ImageFolder
 import torchvision.models as models
@@ -14,6 +15,26 @@ from sklearn.metrics import precision_score, recall_score, f1_score, accuracy_sc
 from torch.optim.lr_scheduler import ReduceLROnPlateau
 from torchsummary import summary
 import re
+
+
+class FocalLoss(nn.Module):
+    def __init__(self, alpha=None, gamma=2, reduction='mean'):
+        super(FocalLoss, self).__init__()
+        self.alpha = alpha
+        self.gamma = gamma
+        self.reduction = reduction
+
+    def forward(self, inputs, targets):
+        ce_loss = F.cross_entropy(inputs, targets, reduction='none', weight=self.alpha)
+        pt = torch.exp(-ce_loss)  # prevents nans when probability 0
+        focal_loss = ((1 - pt) ** self.gamma) * ce_loss
+
+        if self.reduction == 'mean':
+            return focal_loss.mean()
+        elif self.reduction == 'sum':
+            return focal_loss.sum()
+        else:
+            return focal_loss
 
 
 class GraduateModel:
@@ -280,7 +301,8 @@ class GraduateModel:
 
     def get_opt_crit_sh(self):
         # Определение функции потерь с учетом весов классов
-        self.criterion = nn.CrossEntropyLoss(weight=self.class_weights)
+        self.class_weights = self.class_weights if self.class_weights is not None else None
+        self.criterion = FocalLoss(alpha=self.class_weights, gamma=2)
         self.optimizer = optim.__dict__[f"{self.name_optimizer}"](self.model.parameters(), lr=0.001)
         # Создание планировщика LR
         # ReduceLROnPlateau уменьшает скорость обучения, когда метрика перестает уменьшаться
