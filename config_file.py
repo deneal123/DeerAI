@@ -13,10 +13,19 @@ def save_default_config():
 
     config_data = {
         "class_mapping": {
-            "0": "Олень",
-            "1": "Кабарга",
-            "2": "Косуля"
-        }
+            "0": "Deer",
+            "1": "MuskDeer",
+            "2": "RoeDeer"
+        },
+        "augment": False,
+        "half": False,
+        "view_img_heatmap": True,
+        "shape_heatmap": "circle",
+        "vid_stride": 5,
+        "conf": 0.5,
+        "decay_factor_heatmap": 0.95,
+        "iou": 0.5,
+        "pixel_per_meter": 10
     }
 
     with open('config.json', 'w') as config_file:

@@ -8,7 +8,7 @@ import torch
 parser = argparse.ArgumentParser(description='PipeLine для обработки изображений и видео')
 parser.add_argument('--source', type=str,
                     default='./source', help='Путь к директории источника')
-parser.add_argument('--models', type=list,
+parser.add_argument('--model_weight', type=str,
                     default=None, help='Список путей к весам моделей')
 parser.add_argument('--iou', type=float,
                     default=0.5, help='Насколько сильно могут перекрываться объекты')
@@ -33,7 +33,7 @@ parser.add_argument('--shape_heatmap', type=str,
 parser.add_argument('--decay_factor_heatmap', type=float,
                     default=0.95, help='Коэффициент затухания')
 parser.add_argument('--heatmap_alpha', type=float,
-                    default=0.4, help='Прозрачность heatmap')
+                    default=0.5, help='Прозрачность heatmap')
 parser.add_argument('--line_width_eye', type=int,
                     default=1, help='Ширина линии глаза')
 parser.add_argument('--pixel_per_meter', type=int,
@@ -59,12 +59,12 @@ def PipeLine(source: str = "./source",
              show_track: bool = False,
              view_img_heatmap: bool = True,
              shape_heatmap: str = "circle",
-             decay_factor_heatmap: float = 1,
+             decay_factor_heatmap: float = 0.95,
              heatmap_alpha: float = 0.5,
              line_width_eye: int = 1,
              pixel_per_meter: int = 10,
              show_distance: bool = False,
-             vid_stride: int = 0,
+             vid_stride: int = 5,
              device: str = None) -> None:
 
     timestamp = datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
@@ -118,9 +118,9 @@ def PipeLine(source: str = "./source",
 
 
 if __name__ == "__main__":
-    """args = parser.parse_args()
+    args = parser.parse_args()
     PipeLine(source=args.source,
-             models=args.models,
+             model_weight=args.model_weight,
              iou=args.iou,
              conf=args.conf,
              augment=args.augment,
@@ -137,6 +137,4 @@ if __name__ == "__main__":
              pixel_per_meter=args.pixel_per_meter,
              show_distance=args.show_distance,
              vid_stride=args.vid_stride,
-             device=args.device)"""
-
-    PipeLine()
+             device=args.device)

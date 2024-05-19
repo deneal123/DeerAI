@@ -1,8 +1,17 @@
 {
     "class_mapping": {
-        "0": "\u041e\u043b\u0435\u043d\u044c",
-        "1": "\u041a\u0430\u0431\u0430\u0440\u0433\u0430",
-        "2": "\u041a\u043e\u0441\u0443\u043b\u044f"
+        "0": "Deer",
+        "1": "MuskDeer",
+        "2": "RoeDeer"
     },
+    "augment": false,
+    "half": false,
+    "view_img_heatmap": true,
+    "shape_heatmap": "circle",
+    "vid_stride": 5,
+    "conf": 0.5,
+    "decay_factor_heatmap": 0.95,
+    "iou": 0.5,
+    "pixel_per_meter": 10,
     "script_path": "C:\\Users\\NightMare\\PycharmProjects\\BackDeerAI"
 }

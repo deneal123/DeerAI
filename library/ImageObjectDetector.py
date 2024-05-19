@@ -108,8 +108,8 @@ class ImageObjectDetector:
     def save_results_to_json(self, image_filename, results_dict):
         json_filename = os.path.splitext(image_filename)[0]
         json_path = os.path.join(self.path_to_js_time_dir, f"{json_filename}.json")
-        with open(json_path, 'w', encoding="utf-8") as json_file:
-            json.dump(results_dict, json_file, ensure_ascii=False, indent=4)
+        with open(json_path, 'w') as json_file:
+            json.dump(results_dict, json_file, indent=4)
 
     def __get_model__(self):
         if self.model:
