@@ -23,7 +23,7 @@ class ImageObjectDetector:
                  image_source: str,
                  image_result: str = None,
                  imagejs_result: str = None,
-                 model: str = None,
+                 model_weight: str = None,
                  type_of_task_else_default_models: str = "det",
                  iou: float = 0.5,
                  conf: float = 0.5,
@@ -53,10 +53,10 @@ class ImageObjectDetector:
             self.class_mapping = class_mapping
 
         # Инициализация кастомной модели классификации
-        self.model_class = models.vit_b_16(weights=None)
-        num_features = self.model_class.heads[0].in_features
-        self.model_class.heads[0] = nn.Linear(num_features, 3)
-        path_to_weights = os.path.join(self.config_data["script_path"], "./weights/weights_class/vit_b_16.pt")
+        self.model_class = models.swin_t(weights=None)
+        num_features = self.model_class.head.in_features
+        self.model_class.head = nn.Linear(num_features, 3)
+        path_to_weights = os.path.join(self.config_data["script_path"], "./weights/weights_class/swin_t.pt")
         self.model_class.load_state_dict(torch.load(path_to_weights, map_location=self.device)["model_state_dict"])
         self.model_class.to(self.device)  # Перенос модели на устройство
         self.model_class.eval()
@@ -71,7 +71,7 @@ class ImageObjectDetector:
         self.imgsz = imgsz
         self.augment = augment
         self.half = half
-        self.model = model
+        self.model = model_weight
         self.task = type_of_task_else_default_models
 
         path_to_temp = self.config_data["script_path"] if path_to_temp is None else path_to_temp

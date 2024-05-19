@@ -3,3 +3,4 @@ lapx>=0.5.2
 tqdm==4.66.2
 moviepy
 argparse
+PyQt5

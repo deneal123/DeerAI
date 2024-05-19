@@ -36,7 +36,7 @@ class VideoObjectTracker:
                  augment: bool = False,
                  half: bool = False,
                  imgsz: tuple = (512, 512),
-                 models_list: list = None,
+                 model_weight: str = None,
                  path_to_temp: str = None,
                  view_img_heatmap: bool = True,
                  shape_heatmap: str = "circle",
@@ -73,10 +73,10 @@ class VideoObjectTracker:
             self.class_mapping = class_mapping
 
         # Инициализация кастомной модели классификации
-        self.model_class = models.vit_b_16(weights=None)
-        num_features = self.model_class.heads[0].in_features
-        self.model_class.heads[0] = nn.Linear(num_features, 3)
-        path_to_weights = os.path.join(self.config_data["script_path"], "./weights/weights_class/vit_b_16.pt")
+        self.model_class = models.swin_t(weights=None)
+        num_features = self.model_class.head.in_features
+        self.model_class.head = nn.Linear(num_features, 3)
+        path_to_weights = os.path.join(self.config_data["script_path"], "./weights/weights_class/swin_t.pt")
         self.model_class.load_state_dict(torch.load(path_to_weights, map_location=self.device)["model_state_dict"])
         self.model_class.to(self.device)  # Перенос модели на устройство
         self.model_class.eval()
@@ -95,7 +95,8 @@ class VideoObjectTracker:
         self.imgsz = imgsz
         self.augment = augment
         self.half = half
-        self.models = models_list
+        self.models = None
+        self.weight = model_weight
         self.task = type_of_task_else_default_models
         self.view_img = view_img_heatmap
         self.shape = shape_heatmap
@@ -125,7 +126,6 @@ class VideoObjectTracker:
         self.video_source = video_source
 
         self.__get_names_video__()
-        self.__get_model__()
         self.__start_process__()
         self.__del_temp__(self.path_to_temp)
 
@@ -170,61 +170,28 @@ class VideoObjectTracker:
 
     def __start_process__(self):
         try:
-            threads = []
-            if len(self.models) == 1:
-                model = self.models[0]
-                for index, video_path in enumerate(self.paths_to_video):
-                    tracker_thread = threading.Thread(target=self.run_tracker_in_thread,
-                                                      args=(video_path, model, index),
-                                                      daemon=True)
-                    tracker_thread.start()
-                    threads.append(tracker_thread)
-            else:
-                for index, (video_path, model) in enumerate(zip(self.paths_to_video, self.models)):
-                    tracker_thread = threading.Thread(target=self.run_tracker_in_thread,
-                                                      args=(video_path, model, index),
-                                                      daemon=True)
-                    tracker_thread.start()
-                    threads.append(tracker_thread)
-
-            # Ждем завершения всех потоков
-            for thread in threads:
-                thread.join()
+            for index, video_path in enumerate(self.paths_to_video):
+                self.__get_model__()
+                self.run_tracker(video_path, self.models, index)
+                self.models = None
         finally:
             cv2.destroyAllWindows()
 
     def __get_model__(self):
-        count_model = len(self.paths_to_video)
-        if self.models:
-            weights_list = self.models
-            self.models = []
-            if len(weights_list) > 1:
-                for model in weights_list:
-                    model = YOLO(fr"{model}")
-                    model.to(self.device)  # Перенос модели YOLO на устройство
-                    self.models.append(model)
-            elif len(weights_list) == 1:
-                for model in range(count_model):
-                    model = YOLO(fr"{weights_list[0]}")
-                    model.to(self.device)  # Перенос модели YOLO на устройство
-                    self.models.append(model)
+        if self.weight:
+            self.models = YOLO(fr"{self.weight}")
+            self.models.to(self.device)  # Перенос модели YOLO на устройство
         else:
             if self.task == "det":
-                self.models = []
-                for _ in range(count_model):
-                    model = YOLO(r'../weights/weights_detect/yolov8n.pt')
-                    model.to(self.device)  # Перенос модели YOLO на устройство
-                    self.models.append(model)
+                self.models = YOLO(r'../weights/weights_detect/yolov8n.pt')
+                self.models.to(self.device)  # Перенос модели YOLO на устройство
             elif self.task == "seg":
-                self.models = []
-                for _ in range(count_model):
-                    model = YOLO(r'../weights/weights_detect/yolov8n-seg.pt')
-                    model.to(self.device)  # Перенос модели YOLO на устройство
-                    self.models.append(model)
+                self.models = YOLO(r'../weights/weights_detect/yolov8n-seg.pt')
+                self.models.to(self.device)  # Перенос модели YOLO на устройство
             else:
                 raise KeyError("Не верный ввод, доступны задачи: det, seg")
 
-    def run_tracker_in_thread(self, filename, model, file_index):
+    def run_tracker(self, filename, model, file_index):
 
         video = cv2.VideoCapture(filename)
         w, h, fps = (int(video.get(x)) for x in (cv2.CAP_PROP_FRAME_WIDTH, cv2.CAP_PROP_FRAME_HEIGHT, cv2.CAP_PROP_FPS))
@@ -389,5 +356,6 @@ class VideoObjectTracker:
                 break
 
         video.release()
+        cv2.destroyAllWindows()
 
         self.save_results_to_json(video_filename, self.results_dict)

@@ -48,7 +48,7 @@ parser.add_argument('--device', type=str,
 
 # Функция для обработки данных изображений или видео
 def PipeLine(source: str = "./source",
-             models: list = None,
+             model_weight: str = None,
              iou: float = 0.5,
              conf: float = 0.5,
              augment: bool = False,
@@ -64,7 +64,7 @@ def PipeLine(source: str = "./source",
              line_width_eye: int = 1,
              pixel_per_meter: int = 10,
              show_distance: bool = False,
-             vid_stride: int = 5,
+             vid_stride: int = 0,
              device: str = None) -> None:
 
     timestamp = datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
@@ -80,12 +80,12 @@ def PipeLine(source: str = "./source",
     if that is None:
         raise FileExistsError("Директория пуста")
 
-    if models is None:
-        models = "./weights/weights_detect/best.pt"
+    if model_weight is None:
+        model_weight = "./weights/weights_detect/best.pt"
 
     if that == 'video':
         track = VideoObjectTracker(video_source=source,
-                                   models_list=[models],
+                                   model_weight=model_weight,
                                    iou=iou,
                                    conf=conf,
                                    augment=augment,
@@ -106,7 +106,7 @@ def PipeLine(source: str = "./source",
                                    device=device)
     elif that == "image":
         annotate = ImageObjectDetector(image_source=source,
-                                       model=models,
+                                       model_weight=model_weight,
                                        iou=iou,
                                        conf=conf,
                                        augment=augment,
@@ -118,7 +118,7 @@ def PipeLine(source: str = "./source",
 
 
 if __name__ == "__main__":
-    args = parser.parse_args()
+    """args = parser.parse_args()
     PipeLine(source=args.source,
              models=args.models,
              iou=args.iou,
@@ -137,4 +137,6 @@ if __name__ == "__main__":
              pixel_per_meter=args.pixel_per_meter,
              show_distance=args.show_distance,
              vid_stride=args.vid_stride,
-             device=args.device)
+             device=args.device)"""
+
+    PipeLine()
