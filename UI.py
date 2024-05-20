@@ -197,7 +197,7 @@ class Ui_MainWindow(object):
         frame_x = (main_window_width - frame_width) / 2 + 320  # Центрируем по горизонтали
         frame_y = main_window_height - frame_height  # Размещаем внизу
         self.frame = QtWidgets.QFrame(self.centralwidget)
-        self.frame.setGeometry(QtCore.QRect(frame_x, frame_y - 50, frame_width, frame_height))
+        self.frame.setGeometry(QtCore.QRect(int(frame_x), int(frame_y) - 50, int(frame_width), int(frame_height)))
         self.frame.setFrameShape(QtWidgets.QFrame.Box)  # Форма рамки
         self.frame.setLineWidth(2)  # Ширина рамки
 
@@ -287,7 +287,7 @@ class Ui_MainWindow(object):
         frame_x = (main_window_width - frame_width) / 2 - 320  # Центрируем по горизонтали
         frame_y = main_window_height - frame_height  # Размещаем внизу
         frame_2 = QtWidgets.QFrame(self.centralwidget)
-        frame_2.setGeometry(QtCore.QRect(frame_x, frame_y - 50, frame_width, frame_height))
+        frame_2.setGeometry(QtCore.QRect(int(frame_x), int(frame_y) - 50, int(frame_width), int(frame_height)))
         frame_2.setFrameShape(QtWidgets.QFrame.Box)  # Форма рамки
         frame_2.setLineWidth(2)  # Ширина рамки
 

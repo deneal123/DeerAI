@@ -13,5 +13,5 @@
     "decay_factor_heatmap": 0.95,
     "iou": 0.5,
     "pixel_per_meter": 10,
-    "script_path": "C:\\Users\\NightMare\\PycharmProjects\\BackDeerAI"
+    "script_path": "C:\\Users\\NightMare\\PycharmProjects\\DeerAI"
 }
